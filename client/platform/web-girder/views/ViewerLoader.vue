@@ -15,6 +15,7 @@ import ConfigurationEditor from 'dive-common/components/ConfigurationEditor.vue'
 import { UISettingsKey } from 'vue-media-annotator/ConfigurationManager';
 
 import { useRouter } from 'vue-router/composables';
+import { GirderSlicerTaskButton, GirderSlicerTaskCard } from '@bryonlewis/vue-girder-slicer-cli-ui';
 import JobsTab from './JobsTab.vue';
 import Export from './Export.vue';
 import Clone from './Clone.vue';
@@ -39,6 +40,10 @@ context.register({
   component: RevisionHistory,
   description: 'Revision History',
 });
+context.register({
+  component: GirderSlicerTaskCard,
+  description: 'Slicer Tasks',
+});
 
 /**
  * ViewerLoader is responsible for loading
@@ -58,6 +63,7 @@ export default defineComponent({
     DIVETools,
     ConfigurationEditor,
     AnnotationDataBrowser,
+    GirderSlicerTaskButton,
     ...context.getComponents(),
   },
 
@@ -239,6 +245,7 @@ export default defineComponent({
       />
     </template>
     <template #title-right>
+      <GirderSlicerTaskButton style="z-index:9999999" />
       <DIVETools
         v-if="enabledFeatures['toolbox']"
         :button-options="buttonOptions"

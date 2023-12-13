@@ -25,6 +25,7 @@
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
   "dependencies": {
+    "@bryonlewis/vue-girder-slicer-cli-ui": "file:/home/local/KHQ/bryon.lewis/dev/dive-dsa-slicer/vue-girder-slicer-ui",
     "@flatten-js/interval-tree": "^1.0.11",
     "@girder/components": "^3.2.0",
     "@mdi/font": "^6.2.95",
