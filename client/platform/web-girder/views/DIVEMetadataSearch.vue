@@ -1,19 +1,19 @@
 <script lang="ts">
 import {
   computed,
-  defineComponent, onMounted, ref, Ref,
+  defineComponent, onMounted, ref, Ref, PropType,
 } from 'vue';
 import {
-  DIVEMetadataResults, DIVEMetadaFilter, filterDiveMetadata, MetadataResultItem, FilterDisplayConfig,
+  DIVEMetadataResults, DIVEMetadataFilter, filterDiveMetadata, MetadataResultItem, FilterDisplayConfig,
 } from 'platform/web-girder/api/divemetadata.service';
 import { getFolder } from 'platform/web-girder/api/girder.service';
-import DIVEMetadataFilter from './DIVEMetadataFilter.vue';
+import DIVEMetadataFilterVue from './DIVEMetadataFilter.vue';
 import DIVEMetadataCloneVue from './DIVEMetadataClone.vue';
 
 export default defineComponent({
   name: 'DIVEMetadataSearch',
   components: {
-    DIVEMetadataFilter,
+    DIVEMetadataFilterVue,
     DIVEMetadataCloneVue,
   },
   props: {
@@ -21,19 +21,23 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    filter: {
+      type: Object as PropType<DIVEMetadataFilter>,
+      default: () => { },
+    },
   },
   setup(props) {
     const folderList: Ref<MetadataResultItem[]> = ref([]);
     const displayConfig: Ref<FilterDisplayConfig> = ref({ display: [], hide: [] });
     const totalPages = ref(0);
     const currentPage = ref(0);
-    const filters: Ref<DIVEMetadaFilter> = ref({ });
+    const filters: Ref<DIVEMetadataFilter> = ref(props.filter || {});
     const locationStore = {
       _id: props.id,
       _modelType: 'folder',
     };
 
-    const currentFilter: Ref<DIVEMetadaFilter> = ref({});
+    const currentFilter: Ref<DIVEMetadataFilter> = ref(props.filter || {});
 
     const processFilteredMetadataResults = (data: DIVEMetadataResults) => {
       folderList.value = data.pageResults;
@@ -56,7 +60,7 @@ export default defineComponent({
       getData();
     });
 
-    const updateFilter = async (filter?: DIVEMetadaFilter) => {
+    const updateFilter = async (filter?: DIVEMetadataFilter) => {
       if (filter) {
         filters.value = filter;
         currentPage.value = 0;
@@ -95,6 +99,7 @@ export default defineComponent({
       folderList,
       displayConfig,
       advanced,
+      filters,
       //Cloning
       openClone,
       currentFilter,
@@ -105,9 +110,10 @@ export default defineComponent({
 
 <template>
   <v-container>
-    <DIVEMetadataFilter
+    <DIVEMetadataFilterVue
       :id="id"
       :current-page="currentPage"
+      :root-filter="filters"
       :total-pages="totalPages"
       :display-config="displayConfig"
       @update:currentPage="changePage($event)"
@@ -145,7 +151,7 @@ export default defineComponent({
           <span>Create a clone of this data</span>
         </v-tooltip>
       </template>
-    </DIVEMetadataFilter>
+    </DIVEMetadataFilterVue>
     <span v-if="!openClone">
       <v-card
         v-for="(item, key) in folderList"

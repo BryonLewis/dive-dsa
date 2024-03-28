@@ -15,10 +15,14 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    defaultValue: {
+      type: [String, Number, Array, Boolean] as PropType<boolean | string | number | string[] | number[]>,
+      default: undefined,
+    },
   },
   setup(props, { emit }) {
     const set = ref(props.filterItem.set);
-    const value: Ref<undefined | number | string | string[] | number[]> = ref(undefined);
+    const value: Ref<undefined | boolean | number | string | string[] | number[]> = ref(props.defaultValue);
     const rangeFilterEnabled = ref(false);
     const categoryLimit = ref(20);
     watch(value, () => {

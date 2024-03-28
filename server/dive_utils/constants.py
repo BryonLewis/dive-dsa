@@ -88,7 +88,8 @@ OverlayVideoItemMarker = "overlayVideoItem"
 OverlayMetadataMarker = "overlayMetadata"
 DIVEMetadataMarker = "DIVEMetadata"
 DIVEMetadataFilter = "DIVEMetadataFilter"
-
+DIVEMetadataClonedFilter = "DIVEMetadataClonedFilter"
+DIVEMetadataClonedFilterBase = "DIVEMetadataClonedFilterBase"
 # Other constants
 TrainedPipelineCategory = "trained"
 

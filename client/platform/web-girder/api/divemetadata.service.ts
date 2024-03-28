@@ -23,7 +23,7 @@ export interface MetadataFilterKeysItem {
 
 }
 
-export interface DIVEMetadaFilter {
+export interface DIVEMetadataFilter {
     search?: string;
     metadataFilters?: Record<string, MetadataFilterItem>;
 }
@@ -53,7 +53,7 @@ function getMetadataFilterValues(folderId: string, keys?: string[]) {
   });
 }
 
-function filterDiveMetadata(folderId: string, filters: DIVEMetadaFilter, offset = 0, limit = 50, sort = 'filename', sortdir = -1) {
+function filterDiveMetadata(folderId: string, filters: DIVEMetadataFilter, offset = 0, limit = 50, sort = 'filename', sortdir = -1) {
   return girderRest.get<DIVEMetadataResults>(`dive_metadata/${folderId}/filter`, {
     params: {
       filters, offset, limit, sort, sortdir,
@@ -61,7 +61,7 @@ function filterDiveMetadata(folderId: string, filters: DIVEMetadaFilter, offset 
   });
 }
 
-function createDiveMetadataClone(folder: string, filters: DIVEMetadaFilter, destFolder: string) {
+function createDiveMetadataClone(folder: string, filters: DIVEMetadataFilter, destFolder: string) {
   return girderRest.post<string>(`dive_metadata/${folder}/clone_filter`, null, {
     params: {
       baseFolder: folder, filters, destFolder,

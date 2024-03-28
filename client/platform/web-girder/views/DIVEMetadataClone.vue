@@ -7,7 +7,7 @@ import useRequest from 'dive-common/use/useRequest';
 import { RootlessLocationType } from 'platform/web-girder/store/types';
 import { useGirderRest } from 'platform/web-girder/plugins/girder';
 import { useRouter } from 'vue-router/composables';
-import { DIVEMetadaFilter, createDiveMetadataClone } from 'platform/web-girder/api/divemetadata.service';
+import { DIVEMetadataFilter, createDiveMetadataClone } from 'platform/web-girder/api/divemetadata.service';
 
 export default defineComponent({
   components: { GirderFileManager },
@@ -19,7 +19,7 @@ export default defineComponent({
     },
     filter: {
       // Filter to apply to the dataset
-      type: Object as PropType<DIVEMetadaFilter>,
+      type: Object as PropType<DIVEMetadataFilter>,
       required: true,
     },
   },

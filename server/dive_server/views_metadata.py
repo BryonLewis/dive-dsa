@@ -13,7 +13,7 @@ from girder.utility import path as path_util
 import pymongo
 
 from dive_utils import TRUTHY_META_VALUES, FALSY_META_VALUES
-from dive_utils.constants import jsonRegex, ndjsonRegex, DIVEMetadataMarker, DIVEMetadataFilter
+from dive_utils.constants import jsonRegex, ndjsonRegex, DIVEMetadataMarker, DIVEMetadataFilter, DIVEMetadataClonedFilter, DIVEMetadataClonedFilterBase
 from dive_utils.metadata.models import DIVE_Metadata, DIVE_MetadataKeys
 from . import crud_dataset
 
@@ -364,6 +364,7 @@ class DIVEMetadata(Resource):
         user = self.getCurrentUser()
         query = self.get_filter_query(baseFolder, user, filters)
         metadata_items = DIVE_Metadata().find(query, user=self.getCurrentUser())
+        Folder().setMetadata(destFolder, {DIVEMetadataClonedFilter: json.dumps(filters), DIVEMetadataClonedFilterBase: baseFolder["_id"]})
         if metadata_items is not None:
             for item in list(metadata_items):
                 print(item)

@@ -6,7 +6,7 @@ x-worker: &base-worker
   build:
     context: .
     dockerfile: docker/girder_worker.Dockerfile
-  image:  ghcr.io/DigitalSlideArchive/dive-dsa/dive-dsa-worker:${TAG:-latest}
+  image:  ghcr.io/digitalslidearchive/dive-dsa/dive-dsa-worker:${TAG:-latest}
   volumes:
     - addons:/tmp/addons:ro # readonly
     - /var/run/docker.sock:/var/run/docker.sock
@@ -53,7 +53,7 @@ services:
     build:
       context: .
       dockerfile: docker/girder.Dockerfile
-    image: ghcr.io/DigitalSlideArchive/dive-dsa/dive-dsa-web:${TAG:-latest}
+    image: ghcr.io/digitalslidearchive/dive-dsa/dive-dsa-web:${TAG:-latest}
     init: true
     command: ["--mode", "production"]
     depends_on:

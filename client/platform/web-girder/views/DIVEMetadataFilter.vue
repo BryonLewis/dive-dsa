@@ -1,6 +1,6 @@
 <script lang="ts">
 import {
-  DIVEMetadaFilter, MetadataFilterItem, DIVEMetadataFilterValueResults, getMetadataFilterValues, FilterDisplayConfig,
+  DIVEMetadataFilter, MetadataFilterItem, DIVEMetadataFilterValueResults, getMetadataFilterValues, FilterDisplayConfig,
 } from 'platform/web-girder/api/divemetadata.service';
 import {
   computed, defineComponent, onBeforeMount, PropType, Ref, ref, watch,
@@ -28,9 +28,14 @@ export default defineComponent({
       type: Object as PropType<FilterDisplayConfig>,
       required: true,
     },
+    rootFilter: {
+      type: Object as PropType<DIVEMetadataFilter>,
+      default: () => {},
+
+    },
   },
   setup(props, { emit }) {
-    const search = ref('');
+    const search = ref(props.rootFilter.search || '');
     const filters: Ref<DIVEMetadataFilterValueResults['metadataKeys']> = ref({});
     const splitFilters = computed(() => {
       const advanced: DIVEMetadataFilterValueResults['metadataKeys'] = {};
@@ -45,7 +50,7 @@ export default defineComponent({
       return { advanced, displayed };
     });
     const filtersOn = ref(false);
-    const currentFilter: Ref<DIVEMetadaFilter> = ref({});
+    const currentFilter: Ref<DIVEMetadataFilter> = ref({});
     const pageList = computed(() => {
       const list = [];
       for (let i = 0; i < props.totalPages; i += 1) {
@@ -58,8 +63,22 @@ export default defineComponent({
       const filterData = await getMetadataFilterValues(props.id);
       filters.value = filterData.data.metadataKeys;
     };
-    onBeforeMount(() => {
-      getFilters();
+    onBeforeMount(async () => {
+      await getFilters();
+      loadCurrentFilter();
+    });
+
+    const loadCurrentFilter = () => {
+      if (props.rootFilter.metadataFilters && Object.keys(props.rootFilter.metadataFilters).length) {
+        currentFilter.value = props.rootFilter.metadataFilters;
+      }
+      if (props.rootFilter.search) {
+        search.value = props.rootFilter.search;
+      }
+    };
+
+    watch(() => props.rootFilter, () => {
+      loadCurrentFilter();
     });
 
     watch(search, () => {
@@ -94,6 +113,13 @@ export default defineComponent({
       emit('update:currentPage', page - 1);
     };
 
+    const getDefaultValue = (key: string) => {
+      if (props.rootFilter?.metadataFilters && props.rootFilter.metadataFilters[key]) {
+        return props.rootFilter.metadataFilters[key].value;
+      }
+      return undefined;
+    };
+
     return {
 
       pageList,
@@ -104,6 +130,7 @@ export default defineComponent({
       currentFilter,
       changePage,
       updateFilter,
+      getDefaultValue,
     };
   },
 });
@@ -148,7 +175,7 @@ export default defineComponent({
       >
         <v-spacer />
         <div v-for="(filterItem, key) in splitFilters.displayed" :key="`filterItem_${key}`">
-          <DIVEMetadataFilterItemVue :label="key" :filter-item="filterItem" @update-value="updateFilter(key, $event)" />
+          <DIVEMetadataFilterItemVue :label="key" :default-value="getDefaultValue(key)" :filter-item="filterItem" @update-value="updateFilter(key, $event)" />
         </div>
         <v-spacer />
       </v-row>
@@ -159,7 +186,7 @@ export default defineComponent({
           mt-3"
       >
         <div v-for="(filterItem, key) in splitFilters.advanced" :key="`filterItem_${key}`">
-          <DIVEMetadataFilterItemVue :label="key" :filter-item="filterItem" @update-value="updateFilter(key, $event, filterItem.category)" />
+          <DIVEMetadataFilterItemVue :label="key" :default-value="getDefaultValue(key)" :filter-item="filterItem" @update-value="updateFilter(key, $event, filterItem.category)" />
         </div>
       </v-row>
       <v-row class="mt-3">
